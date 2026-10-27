@@ -1,26 +1,205 @@
 @import "tailwindcss";
 
+@theme {
+  --color-bg: #ffffff;
+  --color-fg: #16132b;
+  --color-muted: #5c5870;
+
+  /* Candy / web3 palette */
+  --color-magenta: #ec0e7b;
+  --color-pink: #ff4f9a;
+  --color-grape: #7c3aed;
+  --color-violet: #a855f7;
+  --color-lime: #22c98a;
+  --color-grass: #18c964;
+  --color-sky: #2aabee;
+  --color-blue: #0a66c2;
+  --color-sun: #ff9500;
+  --color-flame: #ff2d55;
+  --color-butter: #ffc83d;
+
+  /* Pastel aurora washes */
+  --color-wash-mint: #c8f7d8;
+  --color-wash-lav: #e7d9fb;
+  --color-wash-peach: #ffe0d3;
+  --color-wash-pink: #ffd7e7;
+  --color-wash-sky: #d2eefb;
+  --color-wash-butter: #fdf2c4;
+
+  --color-ink-50: #faf9fc;
+  --color-ink-100: #f3f1f7;
+  --color-ink-200: #e7e3f0;
+  --color-ink-700: #2a2640;
+  --color-ink-900: #16132b;
+
+  /* Compat scales remapped to candy tones so legacy sections stay on-theme.
+     "brand" = pink/magenta, "teal" = grape/violet. */
+  --color-brand-50: #fff0f7;
+  --color-brand-100: #ffd9eb;
+  --color-brand-200: #ffb3d6;
+  --color-brand-300: #ff80bb;
+  --color-brand-400: #ff4f9a;
+  --color-brand-500: #ff1f86;
+  --color-brand-600: #ec0e7b;
+  --color-brand-700: #c40a66;
+  --color-brand-800: #960a4f;
+  --color-brand-900: #6e0a3c;
+
+  --color-teal-400: #a855f7;
+  --color-teal-500: #9333ea;
+  --color-teal-600: #7c3aed;
+
+  --font-display: var(--font-baloo), ui-rounded, system-ui, sans-serif;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 1.75rem;
+
+  --shadow-soft: 0 2px 8px rgba(22, 19, 43, 0.04), 0 18px 50px -20px rgba(22, 19, 43, 0.18);
+  --shadow-pop: 0 18px 40px -12px rgba(236, 14, 123, 0.45);
+  --shadow-3d: 0 14px 24px -8px rgba(22, 19, 43, 0.35);
+  --shadow-lift: 0 14px 30px -10px rgba(236, 14, 123, 0.45);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--color-ink-200);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  /* Soft pastel wash across the whole page — no flat white anywhere. */
+  background-color: #fdfcff;
+  background-image:
+    radial-gradient(60% 50% at 0% 0%, rgba(200, 247, 216, 0.55), transparent 70%),
+    radial-gradient(55% 45% at 100% 5%, rgba(255, 224, 211, 0.6), transparent 70%),
+    radial-gradient(50% 40% at 100% 55%, rgba(255, 215, 231, 0.55), transparent 70%),
+    radial-gradient(55% 45% at 0% 60%, rgba(231, 217, 251, 0.55), transparent 70%),
+    radial-gradient(50% 40% at 50% 100%, rgba(210, 238, 251, 0.55), transparent 70%);
+  background-attachment: fixed;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Animations ---------- */
+@keyframes float-bob {
+  0%, 100% { transform: translateY(0) rotate(var(--tilt, 0deg)); }
+  50% { transform: translateY(-22px) rotate(calc(var(--tilt, 0deg) + 5deg)); }
+}
+.animate-float-bob {
+  animation: float-bob var(--dur, 7s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(14px, -16px); }
+  66% { transform: translate(-10px, 10px); }
+}
+.animate-drift {
+  animation: drift var(--dur, 14s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 24s linear infinite; }
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee { animation: marquee 30s linear infinite; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.animate-pop-in { animation: pop-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-bob, .animate-float-slow, .animate-drift,
+  .animate-spin-slow, .animate-marquee, .animate-fade-up, .animate-pop-in {
+    animation: none !important;
+  }
+}
+
+/* ---------- Helpers ---------- */
+.text-balance { text-wrap: balance; }
+
+/* Accessibility: visible keyboard focus across interactive elements. */
+:focus-visible {
+  outline: 3px solid var(--color-grape);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- "Professional" theme variant (data-theme="pro") ----------
+   Restrained, B2B-leaning palette for the ICP A/B test. Remaps the candy
+   accents to navy/indigo and tones down the background wash. */
+[data-theme="pro"] {
+  --color-magenta: #1e3a8a;
+  --color-pink: #2563eb;
+  --color-grape: #1d4ed8;
+  --color-violet: #3b82f6;
+  --color-flame: #1d4ed8;
+  --color-sun: #0ea5e9;
+  --color-brand-50: #eff4ff;
+  --color-brand-100: #dbe6ff;
+  --color-brand-200: #b9ccff;
+  --color-brand-500: #2563eb;
+  --color-brand-600: #1d4ed8;
+  --color-brand-700: #1e40af;
+  --color-teal-400: #38bdf8;
+  --color-teal-500: #0ea5e9;
+  --color-teal-600: #0284c7;
+}
+[data-theme="pro"] body {
+  background-image:
+    radial-gradient(60% 50% at 0% 0%, rgba(219, 234, 254, 0.6), transparent 70%),
+    radial-gradient(55% 45% at 100% 5%, rgba(224, 231, 255, 0.6), transparent 70%),
+    radial-gradient(55% 45% at 0% 60%, rgba(226, 232, 240, 0.6), transparent 70%);
+}
+/* Recolor the hard-coded gradient buttons/logo for the pro theme. */
+[data-theme="pro"] [class*="ff2d55"],
+[data-theme="pro"] .glossy {
+  --g: linear-gradient(150deg, #3b82f6, #1d4ed8);
+}
+
+/* Hand-drawn marker underline behind text */
+.marker-underline {
+  background-image: linear-gradient(120deg, var(--color-sun), var(--color-butter));
+  background-repeat: no-repeat;
+  background-position: 0 88%;
+  background-size: 100% 38%;
+  border-radius: 2px;
+  padding: 0 0.1em;
+}
+
+/* Glossy 3D-ish chip: top-left white highlight + colored body.
+   Note: intentionally NO `position` here — it would override Tailwind's
+   `.absolute` on floating icons and break their placement. */
+.glossy {
+  background-image:
+    radial-gradient(circle at 30% 22%, rgba(255,255,255,0.85), rgba(255,255,255,0) 45%),
+    var(--g, linear-gradient(145deg, #ff9a4d, #ff2d55));
+  box-shadow: var(--shadow-3d), inset 0 -6px 12px rgba(0,0,0,0.18), inset 0 4px 8px rgba(255,255,255,0.5);
 }
