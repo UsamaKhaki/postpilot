@@ -46,8 +46,11 @@ export default function ComposerPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idea, tone }),
       });
-      if (!res.ok) throw new Error("Generation failed");
-      const data = await res.json();
+      const data: { text?: string; error?: string } = await res.json().catch(() => ({}));
+      if (!res.ok || !data.text) {
+        setError(data.error ?? "Something went wrong. Please try again.");
+        return;
+      }
       setDraft(data.text);
     } catch {
       setError("Something went wrong. Please try again.");
@@ -70,7 +73,12 @@ export default function ComposerPage() {
           scheduledFor: mode === "schedule" ? defaultRunAt() : null,
         }),
       });
-      if (!res.ok) throw new Error("Save failed");
+      if (!res.ok) {
+        const data: { error?: string } = await res.json().catch(() => ({}));
+        setError(data.error ?? "Couldn't save the post. Please try again.");
+        setSaving(null);
+        return;
+      }
       router.push("/dashboard/posts");
     } catch {
       setError("Couldn't save the post. Please try again.");
@@ -88,8 +96,11 @@ export default function ComposerPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Input */}
         <Card>
-          <label className="text-sm font-bold text-ink-900">What&rsquo;s on your mind?</label>
+          <label htmlFor="composer-idea" className="text-sm font-bold text-ink-900">
+            What&rsquo;s on your mind?
+          </label>
           <textarea
+            id="composer-idea"
             value={idea}
             onChange={(e) => setIdea(e.target.value)}
             rows={5}
@@ -97,11 +108,13 @@ export default function ComposerPage() {
             className="mt-2 w-full resize-y rounded-2xl bg-white/80 p-4 text-sm text-ink-900 outline-none ring-1 ring-ink-100 placeholder:text-muted/70 focus:ring-2 focus:ring-brand-300"
           />
 
-          <div className="mt-5 text-sm font-bold text-ink-900">Tone</div>
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div id="composer-tone" className="mt-5 text-sm font-bold text-ink-900">Tone</div>
+          <div role="group" aria-labelledby="composer-tone" className="mt-2 flex flex-wrap gap-2">
             {TONES.map((t) => (
               <button
                 key={t}
+                type="button"
+                aria-pressed={tone === t}
                 onClick={() => setTone(t)}
                 className={`rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors ${
                   tone === t
@@ -115,6 +128,7 @@ export default function ComposerPage() {
           </div>
 
           <button
+            type="button"
             onClick={generate}
             disabled={loading}
             className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(95deg,#ff2d55,#ff8a00)] px-5 py-3.5 text-base font-bold text-white shadow-[0_14px_30px_-12px_rgba(255,45,85,0.6)] transition-transform hover:-translate-y-0.5 disabled:opacity-70"
@@ -123,7 +137,9 @@ export default function ComposerPage() {
             {loading ? "Writing in your voice…" : "Generate draft"}
           </button>
           {error && (
-            <p className="mt-3 text-center text-sm font-medium text-rose-600">{error}</p>
+            <p role="alert" className="mt-3 text-center text-sm font-medium text-rose-600">
+              {error}
+            </p>
           )}
         </Card>
 
@@ -136,8 +152,10 @@ export default function ComposerPage() {
             </span>
             {draft && (
               <button
+                type="button"
                 onClick={generate}
-                className="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1.5 text-xs font-semibold text-ink-700 ring-1 ring-ink-100"
+                disabled={loading}
+                className="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1.5 text-xs font-semibold text-ink-700 ring-1 ring-ink-100 disabled:opacity-60"
               >
                 <RefreshCw className="h-3.5 w-3.5" /> Regenerate
               </button>
@@ -174,6 +192,7 @@ export default function ComposerPage() {
           {draft && (
             <div className="mt-5 flex flex-wrap gap-2">
               <button
+                type="button"
                 onClick={() => save("schedule")}
                 disabled={saving !== null}
                 className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(95deg,#18c964,#0d9488)] px-5 py-2.5 text-sm font-bold text-white disabled:opacity-70"
@@ -186,6 +205,7 @@ export default function ComposerPage() {
                 {saving === "schedule" ? "Scheduling…" : "Schedule post"}
               </button>
               <button
+                type="button"
                 onClick={() => save("draft")}
                 disabled={saving !== null}
                 className="inline-flex items-center gap-2 rounded-full bg-white/80 px-5 py-2.5 text-sm font-semibold text-ink-700 ring-1 ring-ink-100 disabled:opacity-70"

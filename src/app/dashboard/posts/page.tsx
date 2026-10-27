@@ -91,10 +91,12 @@ export default function PostsPage() {
         }
       />
 
-      <div className="flex flex-wrap gap-2">
+      <div role="group" aria-label="Filter posts by status" className="flex flex-wrap gap-2">
         {TABS.map((t) => (
           <button
             key={t}
+            type="button"
+            aria-pressed={tab === t}
             onClick={() => setTab(t)}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
               tab === t
