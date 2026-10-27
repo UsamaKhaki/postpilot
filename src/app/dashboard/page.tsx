@@ -61,7 +61,7 @@ export default function DashboardOverview() {
           </div>
           <p className="mt-4 text-sm leading-relaxed text-ink-900">
             “We deleted 40% of our onboarding docs and activation went up. Turns
-            out nobody reads the manual — they copy the example. Here's what we
+            out nobody reads the manual — they copy the example. Here&rsquo;s what we
             kept.”
           </p>
           <div className="mt-3 flex flex-wrap gap-2">

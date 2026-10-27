@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   Bell,
-  Check,
   CheckCheck,
   Sparkles,
   CalendarClock,

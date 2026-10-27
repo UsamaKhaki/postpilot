@@ -6,23 +6,18 @@ import {
   Heart,
   MessageCircle,
   MoreHorizontal,
-  Loader2,
   FileX2,
   AlertCircle,
 } from "lucide-react";
 import { PageHeader, Card, StatusBadge, PrimaryButton } from "@/components/dashboard/ui";
+import type { Post } from "@/server/data";
 
-type Status = "Published" | "Scheduled" | "Awaiting approval" | "Draft";
-
-type Post = {
-  id: string;
-  body: string;
-  tag: string;
-  status: Status;
-  when: string;
-  likes?: number;
-  comments?: number;
-};
+async function requestPosts(): Promise<Post[]> {
+  const res = await fetch("/api/posts");
+  if (!res.ok) throw new Error(`GET /api/posts failed with ${res.status}`);
+  const data: { posts: Post[] } = await res.json();
+  return data.posts;
+}
 
 const TABS = ["All", "Awaiting approval", "Scheduled", "Published", "Draft"] as const;
 
@@ -31,21 +26,35 @@ export default function PostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
 
-  async function load() {
-    setState("loading");
+  async function fetchPosts() {
     try {
-      const res = await fetch("/api/posts");
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      setPosts(data.posts);
+      setPosts(await requestPosts());
       setState("ready");
     } catch {
       setState("error");
     }
   }
 
+  function retry() {
+    setState("loading");
+    void fetchPosts();
+  }
+
   useEffect(() => {
-    load();
+    let cancelled = false;
+    requestPosts().then(
+      (loaded) => {
+        if (cancelled) return;
+        setPosts(loaded);
+        setState("ready");
+      },
+      () => {
+        if (!cancelled) setState("error");
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const [approving, setApproving] = useState<string | null>(null);
@@ -59,7 +68,7 @@ export default function PostsPage() {
       const data = await res.json();
       // Open LinkedIn's composer with the post prefilled for a 1-tap publish.
       if (data.shareUrl) window.open(data.shareUrl, "_blank", "noopener");
-      await load();
+      await fetchPosts();
     } catch {
       setState("error");
     } finally {
@@ -122,7 +131,7 @@ export default function PostsPage() {
           <h3 className="mt-4 text-lg font-bold text-ink-900">Couldn&rsquo;t load posts</h3>
           <p className="mt-1 text-sm text-muted">Something went wrong on our end.</p>
           <button
-            onClick={load}
+            onClick={retry}
             className="mt-5 rounded-full bg-[linear-gradient(95deg,#ff2d55,#ff8a00)] px-5 py-2.5 text-sm font-bold text-white"
           >
             Try again

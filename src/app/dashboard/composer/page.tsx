@@ -88,7 +88,7 @@ export default function ComposerPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Input */}
         <Card>
-          <label className="text-sm font-bold text-ink-900">What's on your mind?</label>
+          <label className="text-sm font-bold text-ink-900">What&rsquo;s on your mind?</label>
           <textarea
             value={idea}
             onChange={(e) => setIdea(e.target.value)}

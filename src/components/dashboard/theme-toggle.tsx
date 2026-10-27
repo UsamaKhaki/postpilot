@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { Palette, Briefcase } from "lucide-react";
 
 type Theme = "candy" | "pro";
@@ -15,19 +15,43 @@ function apply(theme: Theme) {
   else document.documentElement.removeAttribute("data-theme");
 }
 
+const STORAGE_KEY = "pp-theme";
+const THEME_EVENT = "pp-theme-change";
+
+function readTheme(): Theme {
+  try {
+    return localStorage.getItem(STORAGE_KEY) === "pro" ? "pro" : "candy";
+  } catch {
+    return "candy";
+  }
+}
+
+// localStorage is an external store: subscribe to cross-tab `storage` events
+// and to our own event so this component re-renders after `choose`.
+function subscribe(onChange: () => void) {
+  window.addEventListener("storage", onChange);
+  window.addEventListener(THEME_EVENT, onChange);
+  return () => {
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener(THEME_EVENT, onChange);
+  };
+}
+
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("candy");
+  const theme = useSyncExternalStore(subscribe, readTheme, () => "candy" as const);
 
   useEffect(() => {
-    const saved = (localStorage.getItem("pp-theme") as Theme) || "candy";
-    setTheme(saved);
-    apply(saved);
-  }, []);
+    apply(theme);
+  }, [theme]);
 
   function choose(t: Theme) {
-    setTheme(t);
-    localStorage.setItem("pp-theme", t);
-    apply(t);
+    try {
+      localStorage.setItem(STORAGE_KEY, t);
+    } catch {
+      // Storage can be unavailable (private mode); the theme still applies for this page.
+      apply(t);
+    }
+    window.dispatchEvent(new Event(THEME_EVENT));
   }
 
   return (

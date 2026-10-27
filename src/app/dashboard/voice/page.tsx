@@ -81,7 +81,7 @@ export default function VoicePage() {
       <Card>
         <h2 className="text-lg font-bold text-ink-900">Writing samples</h2>
         <p className="mt-1 text-sm text-muted">
-          Paste posts you've written or admire. The more, the better.
+          Paste posts you&rsquo;ve written or admire. The more, the better.
         </p>
 
         <div className="mt-4 flex gap-3">
