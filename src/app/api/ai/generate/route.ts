@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { generatePost } from "@/server/ai";
+import { generatePost, parseGenerateInput } from "@/server/ai";
 import { getCurrentUser } from "@/lib/auth";
 
 export async function POST(request: Request) {
@@ -7,14 +7,17 @@ export async function POST(request: Request) {
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const parsed = parseGenerateInput(await request.json().catch(() => null));
+  if (!parsed.ok) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 });
+  }
+
   try {
-    const { idea, tone, samples } = await request.json();
-    if (!idea || typeof idea !== "string") {
-      return NextResponse.json({ error: "An idea is required" }, { status: 400 });
-    }
-    const result = await generatePost({ idea, tone, samples });
+    const result = await generatePost(parsed.value);
     return NextResponse.json(result);
-  } catch {
+  } catch (error) {
+    console.error("[ai] generate route failed", error);
     return NextResponse.json({ error: "Generation failed" }, { status: 500 });
   }
 }

@@ -108,6 +108,44 @@ export type CreatePostInput = {
   scheduledFor?: string | null;
 };
 
+/** LinkedIn rejects posts longer than this. */
+export const MAX_POST_LENGTH = 3000;
+
+export type ParseResult<T> = { ok: true; value: T } | { ok: false; error: string };
+
+/** Validates an untrusted request body for `createPost`. */
+export function parseCreatePostInput(raw: unknown): ParseResult<CreatePostInput> {
+  if (typeof raw !== "object" || raw === null) {
+    return { ok: false, error: "Expected a JSON object" };
+  }
+  const { body, tag, scheduledFor } = raw as Record<string, unknown>;
+
+  if (typeof body !== "string" || !body.trim()) {
+    return { ok: false, error: "Post body is required" };
+  }
+  if (body.length > MAX_POST_LENGTH) {
+    return { ok: false, error: `Post body must be at most ${MAX_POST_LENGTH} characters` };
+  }
+  if (tag != null && typeof tag !== "string") {
+    return { ok: false, error: "Tag must be a string" };
+  }
+  if (
+    scheduledFor != null &&
+    (typeof scheduledFor !== "string" || Number.isNaN(new Date(scheduledFor).getTime()))
+  ) {
+    return { ok: false, error: "Invalid schedule time" };
+  }
+
+  return {
+    ok: true,
+    value: {
+      body,
+      tag: tag ?? undefined,
+      scheduledFor: scheduledFor ? new Date(scheduledFor).toISOString() : null,
+    },
+  };
+}
+
 export async function createPost(
   user: Caller,
   input: CreatePostInput,

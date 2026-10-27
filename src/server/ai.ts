@@ -6,12 +6,47 @@ export type GenerateInput = {
   samples?: string[];
 };
 
+const MAX_IDEA_LENGTH = 2000;
+const MAX_SAMPLES = 5;
+
+/** Validates an untrusted request body for `generatePost`. */
+export function parseGenerateInput(
+  raw: unknown,
+): { ok: true; value: GenerateInput } | { ok: false; error: string } {
+  if (typeof raw !== "object" || raw === null) {
+    return { ok: false, error: "Expected a JSON object" };
+  }
+  const { idea, tone, samples } = raw as Record<string, unknown>;
+
+  if (typeof idea !== "string" || !idea.trim()) {
+    return { ok: false, error: "An idea is required" };
+  }
+  if (idea.length > MAX_IDEA_LENGTH) {
+    return { ok: false, error: `Idea must be at most ${MAX_IDEA_LENGTH} characters` };
+  }
+  if (tone != null && typeof tone !== "string") {
+    return { ok: false, error: "Tone must be a string" };
+  }
+  if (samples != null && !(Array.isArray(samples) && samples.every((s) => typeof s === "string"))) {
+    return { ok: false, error: "Samples must be an array of strings" };
+  }
+
+  return {
+    ok: true,
+    value: {
+      idea,
+      tone: tone ?? undefined,
+      samples: samples?.slice(0, MAX_SAMPLES),
+    },
+  };
+}
+
 const SYSTEM = `You are Postpilot, a ghostwriter for LinkedIn. Write a single LinkedIn post in the user's voice.
 Rules: strong first-line hook, short punchy lines, one clear takeaway, no hashtags inside the body, no emojis unless natural. Keep it under 120 words.`;
 
 function buildPrompt({ idea, tone, samples }: GenerateInput) {
   const voice = samples?.length
-    ? `\n\nMatch the voice of these samples:\n${samples.slice(0, 5).map((s) => `- ${s}`).join("\n")}`
+    ? `\n\nMatch the voice of these samples:\n${samples.slice(0, MAX_SAMPLES).map((s) => `- ${s}`).join("\n")}`
     : "";
   return `Tone: ${tone ?? "Punchy"}.\nIdea: ${idea}${voice}`;
 }
@@ -76,11 +111,14 @@ export async function generatePost(input: GenerateInput): Promise<{
   source: "openai" | "anthropic" | "fallback";
 }> {
   if (aiConfigured()) {
+    const source = env.OPENAI_API_KEY ? "openai" : "anthropic";
     try {
-      if (env.OPENAI_API_KEY) return { text: await withOpenAI(input), source: "openai" };
-      if (env.ANTHROPIC_API_KEY) return { text: await withAnthropic(input), source: "anthropic" };
-    } catch {
-      // fall through to local draft on provider error
+      const text = source === "openai" ? await withOpenAI(input) : await withAnthropic(input);
+      if (text) return { text, source };
+      console.warn(`[ai] ${source} returned an empty draft, using local fallback`);
+    } catch (error) {
+      // Keep the composer usable when the provider is down, but leave a trace.
+      console.error(`[ai] ${source} generation failed, using local fallback`, error);
     }
   }
   return { text: fallbackDraft(input), source: "fallback" };
