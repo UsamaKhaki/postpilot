@@ -146,7 +146,7 @@ export default function PostsPage() {
             <FileX2 className="h-7 w-7" />
           </span>
           <h3 className="mt-4 text-lg font-bold text-ink-900">No posts here yet</h3>
-          <p className="mt-1 text-sm text-muted">
+          <p className="mb-5 mt-1 text-sm text-muted">
             Nothing in &ldquo;{tab}&rdquo;. Generate your first one.
           </p>
           <PrimaryButton href="/dashboard/composer">
