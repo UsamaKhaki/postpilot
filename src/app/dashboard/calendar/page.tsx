@@ -3,7 +3,9 @@ import { PageHeader, Card, PrimaryButton } from "@/components/dashboard/ui";
 
 const DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-// Posts keyed by day-of-month for a sample month starting on a Monday.
+// Sample month shown on the calendar, with posts keyed by day of month.
+const YEAR = 2026;
+const MONTH = 4; // May, zero-based like Date
 const POSTS: Record<number, { tag: string; color: string }[]> = {
   3: [{ tag: "Engineering", color: "bg-sky-100 text-sky-700" }],
   5: [{ tag: "AI", color: "bg-violet-100 text-violet-700" }],
@@ -20,14 +22,18 @@ const POSTS: Record<number, { tag: string; color: string }[]> = {
 };
 
 export default function CalendarPage() {
-  const days = Array.from({ length: 30 }, (_, i) => i + 1);
+  const daysInMonth = new Date(YEAR, MONTH + 1, 0).getDate();
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  // Monday-first grid: blank cells before the 1st.
+  const leadingBlanks = (new Date(YEAR, MONTH, 1).getDay() + 6) % 7;
+  const scheduledCount = Object.values(POSTS).flat().length;
   const today = 12;
 
   return (
     <div className="space-y-8">
       <PageHeader
         title="Content calendar"
-        subtitle="May 2026 · 9 posts scheduled"
+        subtitle={`May 2026 · ${scheduledCount} posts scheduled`}
         action={
           <PrimaryButton href="/dashboard/composer">
             <Sparkles className="h-4 w-4" />
@@ -44,6 +50,9 @@ export default function CalendarPage() {
             <div key={d} className="pb-2 text-center text-xs font-bold uppercase tracking-wide text-muted">
               {d}
             </div>
+          ))}
+          {Array.from({ length: leadingBlanks }, (_, i) => (
+            <div key={`blank-${i}`} aria-hidden="true" />
           ))}
           {days.map((day) => {
             const posts = POSTS[day] ?? [];
