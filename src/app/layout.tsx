@@ -15,7 +15,7 @@ const poppins = Poppins({
 });
 
 const appUrl = process.env.APP_URL ?? "http://localhost:3000";
-const title = "Postpilot — LinkedIn content on autopilot";
+const title = "Postpilot: LinkedIn content on autopilot";
 const description =
   "Postpilot learns your voice, drafts LinkedIn posts that sound like you, and schedules them. You approve over WhatsApp; we publish.";
 
