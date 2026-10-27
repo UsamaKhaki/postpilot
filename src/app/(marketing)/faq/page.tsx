@@ -4,7 +4,7 @@ import { Faq } from "@/components/sections/faq";
 import { Cta } from "@/components/sections/cta";
 
 export const metadata: Metadata = {
-  title: "FAQ — Postpilot",
+  title: "FAQ",
   description:
     "Answers to common questions about Postpilot: voice accuracy, approvals, account safety, limits, multiple accounts and cancellation.",
 };

@@ -4,7 +4,7 @@ import { ArrowRight, Target, HeartHandshake, ShieldCheck } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 
 export const metadata: Metadata = {
-  title: "About — Postpilot",
+  title: "About",
   description:
     "Why we built Postpilot: helping busy professionals stay visible on LinkedIn without it eating their week.",
 };

@@ -13,7 +13,7 @@ import {
 import { PageHero } from "@/components/page-hero";
 
 export const metadata: Metadata = {
-  title: "Features — Postpilot",
+  title: "Features",
   description:
     "Everything Postpilot does to keep you posting on LinkedIn: voice learning, zero manual posting, custom AI images, WhatsApp approval and more.",
 };

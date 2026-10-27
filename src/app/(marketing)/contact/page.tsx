@@ -4,7 +4,7 @@ import { PageHero } from "@/components/page-hero";
 import { ContactForm } from "./contact-form";
 
 export const metadata: Metadata = {
-  title: "Contact — Postpilot",
+  title: "Contact",
   description:
     "Get in touch with the Postpilot team. Share a few details and we'll reach out with next steps within 24 hours.",
 };

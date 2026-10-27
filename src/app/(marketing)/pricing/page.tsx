@@ -5,7 +5,7 @@ import { Faq } from "@/components/sections/faq";
 import { Cta } from "@/components/sections/cta";
 
 export const metadata: Metadata = {
-  title: "Pricing — Postpilot",
+  title: "Pricing",
   description:
     "Simple plans for staying consistent on LinkedIn. Start free, upgrade to Pro for unlimited posts, or scale a team. Cancel anytime.",
 };

@@ -6,7 +6,7 @@ import { TopbarActions } from "@/components/dashboard/topbar-actions";
 import { getCurrentUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
-  title: "Dashboard — Postpilot",
+  title: "Dashboard",
 };
 
 export default async function DashboardLayout({

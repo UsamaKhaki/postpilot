@@ -6,7 +6,7 @@ import { Logo } from "@/components/logo";
 import { LoginButtons } from "./login-buttons";
 
 export const metadata: Metadata = {
-  title: "Log in — Postpilot",
+  title: "Log in",
   description:
     "Sign in to Postpilot with your LinkedIn account to start automating your content.",
 };
