@@ -61,6 +61,8 @@ export function ThemeToggle() {
         return (
           <button
             key={o.id}
+            type="button"
+            aria-pressed={active}
             onClick={() => choose(o.id)}
             className={`flex items-start gap-3 rounded-2xl p-4 text-left transition-transform hover:-translate-y-0.5 ${
               active ? "bg-white shadow-[var(--shadow-soft)] ring-2 ring-brand-300" : "bg-white/70 ring-1 ring-ink-100"
