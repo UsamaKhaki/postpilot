@@ -17,7 +17,7 @@ to real Supabase + integrations purely by setting env vars. Copy `.env.example` 
 ## Auth flow (Supabase)
 
 1. Enable **LinkedIn (OIDC)** in Supabase → Authentication → Providers.
-2. Add `http://localhost:3000/auth/callback` (and the prod URL) to the provider redirects.
+2. Add `http://localhost:6401/auth/callback` (and the prod URL) to the provider redirects.
 3. Login page calls `supabase.auth.signInWithOAuth({ provider: 'linkedin_oidc' })`.
 4. `/auth/callback` exchanges the code for a session.
 5. `getCurrentUser()` guards `/dashboard/*` (redirect to `/login` when signed out).

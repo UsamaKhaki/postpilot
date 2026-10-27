@@ -1,4 +1,4 @@
-# LinkedIn compliance — the de-risking decision
+# LinkedIn compliance: the de-risking decision
 
 **Status: this is the single biggest product risk. Read before building auto-publish.**
 
@@ -10,7 +10,7 @@ The marketing promise was "auto-publish to LinkedIn." LinkedIn's platform terms 
 - LinkedIn's official APIs gate organic posting behind partner/Marketing-Developer-Program
   approval, and personal-profile posting via API is heavily restricted.
 - Unofficial automation (headless browser, cookie reuse) violates the LinkedIn User
-  Agreement and **can get end-user accounts restricted or banned** — an unacceptable risk
+  Agreement and **can get end-user accounts restricted or banned**, an unacceptable risk
   for a tool whose users are founders/operators staking their reputation.
 
 ## The decision: approve-first, manual publish by default
@@ -36,8 +36,8 @@ This is reflected in:
 1. Apply to the **LinkedIn Marketing Developer Program** and the "Share on LinkedIn"
    / "Sign In with LinkedIn using OpenID Connect" products; document exactly what organic
    posting scopes are granted.
-2. If full auto-posting isn't granted, ship the **manual 1-tap** flow — it's the honest,
+2. If full auto-posting isn't granted, ship the **manual 1-tap** flow. It's the honest,
    compliant MVP and still delivers 90% of the value (the hard part is the *writing*, not
    the *clicking publish*).
-3. Keep the WhatsApp approval step regardless — it's both a compliance asset (human in the
+3. Keep the WhatsApp approval step regardless. It's both a compliance asset (human in the
    loop) and the product's most differentiated feature.
