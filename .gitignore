@@ -42,3 +42,14 @@ next-env.d.ts
 
 # local env example is safe to commit
 !.env.example
+
+# Local editor and tool config (not part of the project)
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+AGENTS.md
+.cursor/
+.cursorrules
+.windsurfrules
+.github/copilot-instructions.md
+.aider*
