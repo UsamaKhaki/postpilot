@@ -40,7 +40,7 @@ export default function AnalyticsPage() {
         </div>
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <h2 className="text-lg font-bold text-ink-900">Top performing posts</h2>
           <div className="mt-4 divide-y divide-ink-100">

@@ -51,7 +51,7 @@ export default function DashboardOverview() {
         <StatCard icon={<Heart className="h-6 w-6" />} label="Engagement rate" value="4.7%" delta="+0.6%" color="pink" />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Next approval */}
         <Card className="lg:col-span-1">
           <div className="flex items-center gap-2 text-sm font-bold text-brand-600">
@@ -101,7 +101,7 @@ export default function DashboardOverview() {
       {/* Activity */}
       <Card>
         <h2 className="text-lg font-bold text-ink-900">Recent activity</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {ACTIVITY.map((a) => (
             <div key={a.what} className="flex items-start gap-3 rounded-2xl bg-white/70 p-4">
               <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-teal-500 text-white">
