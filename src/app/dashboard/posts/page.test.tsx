@@ -26,6 +26,9 @@ describe("PostsPage", () => {
     expect(screen.getByRole("status").textContent).toMatch(/loading posts/i);
     expect(await screen.findByText("Awaiting post body")).toBeTruthy();
     expect(screen.getByText("Published post body")).toBeTruthy();
+    // Editing has no backend yet, so the page must not offer controls that do nothing.
+    expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "More" })).toBeNull();
   });
 
   it("filters by status tab and shows an empty state", async () => {

@@ -5,7 +5,6 @@ import {
   Sparkles,
   Heart,
   MessageCircle,
-  MoreHorizontal,
   FileX2,
   AlertCircle,
 } from "lucide-react";
@@ -164,12 +163,7 @@ export default function PostsPage() {
               <span className="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-bold text-brand-700">
                 {p.tag}
               </span>
-              <div className="flex items-center gap-2">
-                <StatusBadge status={p.status} />
-                <button className="grid h-8 w-8 place-items-center rounded-full text-muted hover:bg-white" aria-label="More">
-                  <MoreHorizontal className="h-4 w-4" />
-                </button>
-              </div>
+              <StatusBadge status={p.status} />
             </div>
             <p className="mt-3 text-sm leading-relaxed text-ink-900">{p.body}</p>
             <div className="mt-4 flex items-center justify-between border-t border-ink-100 pt-3 text-xs text-muted">
@@ -180,18 +174,15 @@ export default function PostsPage() {
                   <span className="inline-flex items-center gap-1.5"><MessageCircle className="h-4 w-4" /> {p.comments}</span>
                 </span>
               ) : (
-                <span className="flex gap-3">
-                  <button className="font-semibold text-brand-600 hover:underline">Edit</button>
-                  {p.status === "Awaiting approval" && (
-                    <button
-                      onClick={() => approve(p.id)}
-                      disabled={approving !== null}
-                      className="font-semibold text-emerald-600 hover:underline disabled:opacity-60"
-                    >
-                      {approving === p.id ? "Approving…" : "Approve"}
-                    </button>
-                  )}
-                </span>
+                p.status === "Awaiting approval" && (
+                  <button
+                    onClick={() => approve(p.id)}
+                    disabled={approving !== null}
+                    className="font-semibold text-emerald-600 hover:underline disabled:opacity-60"
+                  >
+                    {approving === p.id ? "Approving…" : "Approve"}
+                  </button>
+                )
               )}
             </div>
           </Card>
