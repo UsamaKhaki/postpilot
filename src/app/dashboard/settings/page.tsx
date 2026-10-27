@@ -14,9 +14,11 @@ function LinkedInGlyph({ className = "" }: { className?: string }) {
 }
 
 function Toggle({
+  label,
   on,
   onClick,
 }: {
+  label: string;
   on: boolean;
   onClick: () => void;
 }) {
@@ -27,6 +29,7 @@ function Toggle({
       className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
         on ? "bg-[linear-gradient(95deg,#ff2d55,#ff8a00)]" : "bg-ink-200"
       }`}
+      aria-label={label}
       aria-pressed={on}
     >
       <span
@@ -66,9 +69,6 @@ export default function SettingsPage() {
           <Field label="Headline" value="Founder · DevTools" />
           <Field label="Timezone" value="GMT+5 (PKT)" />
         </div>
-        <button className="mt-5 rounded-full bg-[linear-gradient(95deg,#ff2d55,#ff8a00)] px-5 py-2.5 text-sm font-bold text-white">
-          Save changes
-        </button>
       </Card>
 
       {/* Appearance */}
@@ -127,7 +127,7 @@ export default function SettingsPage() {
                 <div className="text-sm font-semibold text-ink-900">{row.label}</div>
                 <div className="text-sm text-muted">{row.desc}</div>
               </div>
-              <Toggle on={prefs[row.k]} onClick={() => toggle(row.k)} />
+              <Toggle label={row.label} on={prefs[row.k]} onClick={() => toggle(row.k)} />
             </div>
           ))}
         </div>
@@ -163,6 +163,7 @@ function Field({ label, value }: { label: string; value: string }) {
     <label className="block">
       <span className="mb-1.5 block text-sm font-semibold text-ink-900">{label}</span>
       <input
+        readOnly
         defaultValue={value}
         className="w-full rounded-2xl bg-white/80 px-4 py-2.5 text-sm text-ink-900 outline-none ring-1 ring-ink-100 focus:ring-2 focus:ring-brand-300"
       />

@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { PageHeader, Card, PrimaryButton } from "@/components/dashboard/ui";
 
 const DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -37,17 +37,7 @@ export default function CalendarPage() {
       />
 
       <Card>
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-ink-900">May 2026</h2>
-          <div className="flex gap-2">
-            <button className="grid h-9 w-9 place-items-center rounded-full bg-white/80 text-ink-700 shadow-sm" aria-label="Previous month">
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button className="grid h-9 w-9 place-items-center rounded-full bg-white/80 text-ink-700 shadow-sm" aria-label="Next month">
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
+        <h2 className="mb-5 text-lg font-bold text-ink-900">May 2026</h2>
 
         <div className="grid grid-cols-7 gap-2">
           {DOW.map((d) => (

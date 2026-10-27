@@ -5,7 +5,6 @@ import {
   Heart,
   Sparkles,
   Check,
-  X,
   ArrowUpRight,
 } from "lucide-react";
 import {
@@ -71,13 +70,8 @@ export default function DashboardOverview() {
               </span>
             ))}
           </div>
-          <div className="mt-5 flex items-center gap-2">
-            <button className="inline-flex items-center gap-1.5 rounded-full bg-[linear-gradient(95deg,#18c964,#0d9488)] px-4 py-2 text-xs font-bold text-white">
-              <Check className="h-4 w-4" /> Approve
-            </button>
-            <button className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold text-ink-700 shadow-sm">
-              <X className="h-4 w-4" /> Regenerate
-            </button>
+          <div className="mt-5">
+            <GhostButton href="/dashboard/posts">Review in Posts</GhostButton>
           </div>
         </Card>
 
