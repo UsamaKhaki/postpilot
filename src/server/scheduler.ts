@@ -49,11 +49,16 @@ export async function dispatchDuePosts(): Promise<DispatchResult> {
   let notified = 0;
 
   for (const post of due ?? []) {
-    const { data: profile } = await db
+    const { data: profile, error: profileError } = await db
       .from("profiles")
       .select("whatsapp_number")
       .eq("id", post.user_id)
       .maybeSingle();
+    if (profileError) {
+      // Leave the post Scheduled so the next run retries it.
+      console.error("[scheduler] profile lookup failed", post.id, profileError);
+      continue;
+    }
 
     if (profile?.whatsapp_number) {
       const { sent } = await sendApprovalRequest({
@@ -65,7 +70,13 @@ export async function dispatchDuePosts(): Promise<DispatchResult> {
     }
 
     // Advance the post so it isn't dispatched again next minute.
-    await db.from("posts").update({ status: "Awaiting approval" }).eq("id", post.id);
+    const { error: updateError } = await db
+      .from("posts")
+      .update({ status: "Awaiting approval" })
+      .eq("id", post.id);
+    if (updateError) {
+      console.error("[scheduler] status update failed", post.id, updateError);
+    }
   }
 
   return { processed: due?.length ?? 0, notified };

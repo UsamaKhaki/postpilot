@@ -9,11 +9,16 @@ export async function POST() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const base = env.APP_URL.replace(/\/$/, "");
-  const { url } = await createCheckoutSession({
-    userId: user.id,
-    email: user.email,
-    successUrl: `${base}/dashboard/billing?status=success`,
-    cancelUrl: `${base}/dashboard/billing`,
-  });
-  return NextResponse.json({ url });
+  try {
+    const { url } = await createCheckoutSession({
+      userId: user.id,
+      email: user.email,
+      successUrl: `${base}/dashboard/billing?status=success`,
+      cancelUrl: `${base}/dashboard/billing`,
+    });
+    return NextResponse.json({ url });
+  } catch (error) {
+    console.error("[billing] checkout failed", error);
+    return NextResponse.json({ error: "Checkout failed" }, { status: 502 });
+  }
 }

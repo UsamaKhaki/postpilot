@@ -27,7 +27,8 @@ export async function POST(request: Request) {
 
   try {
     await syncSubscriptionFromEvent(event);
-  } catch {
+  } catch (error) {
+    console.error("[billing] webhook handler failed", error);
     // 500 so Stripe retries the delivery.
     return NextResponse.json({ error: "Handler failed" }, { status: 500 });
   }

@@ -36,7 +36,10 @@ export async function createCheckoutSession(opts: {
     },
     body,
   });
-  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(`Stripe checkout session failed with ${res.status}`);
+  }
+  const data: { url?: string } = await res.json();
   return { url: data.url ?? opts.cancelUrl };
 }
 
@@ -52,20 +55,29 @@ export function verifyStripeSignature(
   toleranceSec = 300,
 ): boolean {
   if (!header) return false;
-  const parts = Object.fromEntries(
-    header.split(",").map((kv) => kv.split("=", 2) as [string, string]),
-  );
-  const timestamp = parts["t"];
-  const signature = parts["v1"];
-  if (!timestamp || !signature) return false;
 
-  const expected = crypto
-    .createHmac("sha256", secret)
-    .update(`${timestamp}.${payload}`)
-    .digest("hex");
-  const a = Buffer.from(signature);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return false;
+  // Stripe sends one `v1` entry per active signing secret during rotation,
+  // so collect them all instead of keeping the last one.
+  let timestamp: string | undefined;
+  const signatures: string[] = [];
+  for (const part of header.split(",")) {
+    const separator = part.indexOf("=");
+    if (separator === -1) continue;
+    const key = part.slice(0, separator).trim();
+    const value = part.slice(separator + 1).trim();
+    if (key === "t") timestamp = value;
+    if (key === "v1") signatures.push(value);
+  }
+  if (!timestamp || signatures.length === 0) return false;
+
+  const expected = Buffer.from(
+    crypto.createHmac("sha256", secret).update(`${timestamp}.${payload}`).digest("hex"),
+  );
+  const matches = signatures.some((signature) => {
+    const candidate = Buffer.from(signature);
+    return candidate.length === expected.length && crypto.timingSafeEqual(candidate, expected);
+  });
+  if (!matches) return false;
 
   // Reject stale signatures to blunt replay attacks.
   const age = Math.floor(Date.now() / 1000) - Number(timestamp);
@@ -91,19 +103,21 @@ export async function syncSubscriptionFromEvent(event: any): Promise<void> {
       const s = event.data.object;
       const userId = s.client_reference_id;
       if (!userId) return;
-      await db.from("subscriptions").upsert({
+      const { error } = await db.from("subscriptions").upsert({
         user_id: userId,
         plan: "pro",
         status: "active",
         stripe_customer_id: s.customer ?? null,
       });
+      // Throw so the webhook returns 500 and Stripe retries the delivery.
+      if (error) throw error;
       return;
     }
     case "customer.subscription.updated":
     case "customer.subscription.deleted": {
       const sub = event.data.object;
       const active = sub.status === "active" || sub.status === "trialing";
-      await db
+      const { error } = await db
         .from("subscriptions")
         .update({
           status: sub.status,
@@ -113,6 +127,7 @@ export async function syncSubscriptionFromEvent(event: any): Promise<void> {
             : null,
         })
         .eq("stripe_customer_id", sub.customer);
+      if (error) throw error;
       return;
     }
     default:

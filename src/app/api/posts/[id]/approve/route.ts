@@ -41,7 +41,8 @@ export async function POST(
     await markPostPublished(user, id);
 
     return NextResponse.json({ ok: true, shareUrl, mode });
-  } catch {
+  } catch (error) {
+    console.error("[posts] approve failed", id, error);
     return NextResponse.json({ error: "Approval failed" }, { status: 500 });
   }
 }
