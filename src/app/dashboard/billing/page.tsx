@@ -1,4 +1,4 @@
-import { Check, CreditCard, Download } from "lucide-react";
+import { Check, CreditCard } from "lucide-react";
 import { PageHeader, Card } from "@/components/dashboard/ui";
 
 const INCLUDED = [
@@ -22,22 +22,13 @@ export default function BillingPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Current plan */}
         <Card className="lg:col-span-2">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-bold text-brand-700">
-                Current plan
-              </span>
-              <h2 className="mt-3 text-2xl font-extrabold text-ink-900">Pro</h2>
-              <p className="text-muted">$29 / month · renews Jun 1, 2026</p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <button className="rounded-full bg-[linear-gradient(95deg,#7c3aed,#a855f7)] px-5 py-2.5 text-sm font-bold text-white">
-                Upgrade to Team
-              </button>
-              <button className="rounded-full bg-white/80 px-5 py-2.5 text-sm font-semibold text-ink-700 ring-1 ring-ink-100">
-                Cancel plan
-              </button>
-            </div>
+          {/* This page does not call /api/billing/checkout yet, so it shows no plan controls. */}
+          <div>
+            <span className="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-bold text-brand-700">
+              Current plan
+            </span>
+            <h2 className="mt-3 text-2xl font-extrabold text-ink-900">Pro</h2>
+            <p className="text-muted">$29 / month · renews Jun 1, 2026</p>
           </div>
           <ul className="mt-6 grid gap-3 sm:grid-cols-2">
             {INCLUDED.map((f) => (
@@ -75,9 +66,6 @@ export default function BillingPage() {
                 <div className="text-sm font-bold text-ink-900">Visa ···· 4242</div>
                 <div className="text-xs text-muted">Expires 08/28</div>
               </div>
-              <button className="ml-auto text-sm font-semibold text-brand-600 hover:underline">
-                Update
-              </button>
             </div>
           </Card>
         </div>
@@ -93,9 +81,6 @@ export default function BillingPage() {
                 <div className="text-xs text-muted">{inv.date}</div>
               </div>
               <div className="text-sm font-bold text-ink-900">{inv.amount}</div>
-              <button className="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1.5 text-xs font-semibold text-ink-700 ring-1 ring-ink-100">
-                <Download className="h-3.5 w-3.5" /> PDF
-              </button>
             </div>
           ))}
         </div>
