@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Loader2 } from "lucide-react";
+import { Info } from "lucide-react";
 
 const SUBJECTS = [
   "General inquiry",
@@ -13,27 +13,38 @@ const SUBJECTS = [
 ];
 
 export function ContactForm() {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [submitted, setSubmitted] = useState(false);
 
+  // There is no contact backend in this project, so the form validates input
+  // but says plainly that nothing was sent instead of faking a success state.
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setStatus("sending");
-    // Placeholder: wire this to your API / email provider.
-    setTimeout(() => setStatus("sent"), 900);
+    setSubmitted(true);
   }
 
-  if (status === "sent") {
+  if (submitted) {
     return (
-      <div className="rounded-[var(--radius-card)] border border-brand-200 bg-brand-50 p-10 text-center">
-        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-brand-600 text-white">
-          <Check className="h-7 w-7" />
+      <div
+        role="status"
+        className="rounded-[var(--radius-card)] border border-ink-200 bg-white p-10 text-center"
+      >
+        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-brand-50 text-brand-600 ring-1 ring-brand-100">
+          <Info className="h-7 w-7" />
         </span>
         <h3 className="mt-5 text-xl font-semibold text-ink-900">
-          Message sent
+          Message not sent
         </h3>
         <p className="mt-2 text-sm text-muted">
-          Thanks for reaching out. We&rsquo;ll get back to you within 24 hours.
+          This demo is not connected to an inbox, so your message was not
+          delivered anywhere.
         </p>
+        <button
+          type="button"
+          onClick={() => setSubmitted(false)}
+          className="mt-6 text-sm font-semibold text-brand-600 hover:underline"
+        >
+          Back to the form
+        </button>
       </div>
     );
   }
@@ -83,12 +94,13 @@ export function ContactForm() {
 
       <button
         type="submit"
-        disabled={status === "sending"}
-        className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white shadow-[var(--shadow-lift)] transition-transform hover:-translate-y-0.5 disabled:opacity-70"
+        className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white shadow-[var(--shadow-lift)] transition-transform hover:-translate-y-0.5"
       >
-        {status === "sending" && <Loader2 className="h-4 w-4 animate-spin" />}
-        {status === "sending" ? "Sending…" : "Submit message"}
+        Submit message
       </button>
+      <p className="mt-3 text-center text-xs text-muted">
+        Demo only: messages are not delivered.
+      </p>
     </form>
   );
 }
