@@ -24,7 +24,7 @@ Postpilot keeps a human in the loop on purpose. Writing is automated, publishing
 |---|---|
 | **Composer** | Turns an idea and one of five tones into a draft through OpenAI (`gpt-4o-mini`) or Anthropic (`claude-haiku-4-5`). With no API key it uses a deterministic local template, so the flow works offline. Drafts can be saved or scheduled. |
 | **Posts** | Lists every post with status filters (awaiting approval, scheduled, published, draft). Approving a post marks it published and opens LinkedIn's share composer with the text prefilled. |
-| **Scheduler** | A Vercel Cron job (`/api/cron/dispatch`) finds posts whose time has come, sends a WhatsApp approval request through Twilio, and moves them to "Awaiting approval". The endpoint is protected by `CRON_SECRET` and refuses to run open once a service-role key is configured. |
+| **Scheduler** | A Vercel Cron job (`/api/cron/dispatch`) finds posts whose time has come, sends a WhatsApp approval request through Twilio, and moves them to "Awaiting approval". The endpoint is protected by `CRON_SECRET` and refuses to run open once a service-role key is configured. `vercel.json` runs it daily because Vercel's Hobby plan only allows daily cron jobs; on a Pro plan set the schedule to `* * * * *` for minute-level dispatch. |
 | **Accounts** | Sign-in with LinkedIn through Supabase Auth (OIDC). Without Supabase, a signed demo cookie opens the full dashboard. |
 | **Billing backend** | A Stripe Checkout endpoint and a signature-verified webhook that keeps a `subscriptions` table in sync. The billing screen does not call checkout yet (see limitations). |
 | **Marketing site** | Landing, features, pricing, FAQ, about, contact and legal pages, with metadata, `robots.txt` and a sitemap. |
@@ -61,7 +61,7 @@ flowchart LR
     API[Route handlers<br/>/api/posts, /api/ai/generate,<br/>/api/billing/*, /api/cron/dispatch]
     Server[src/server<br/>data, ai, scheduler,<br/>whatsapp, billing]
   end
-  Cron[Vercel Cron<br/>every minute] --> API
+  Cron[Vercel Cron<br/>daily on Hobby] --> API
   UI --> Proxy --> API --> Server
   Server --> DB[(Supabase Postgres<br/>with RLS)]
   Server --> Mem[(In-memory store<br/>demo users)]
